@@ -126,8 +126,9 @@ E.g.,
 
 ;;;###autoload
 (defun number-to-word (number)
-  (cl-check-type number (integer 0 *) "a non-negative integer")
-  (cond ((= number 0) "zero")
+  (cond ((not (and (integerp number) (>= number 0)))
+         (error "%s is not a non-negative integer" number))
+        ((= number 0) "zero")
         ((and (< 0 number) (<= number (1- 1e15)))
          (number-to-word--stringify number))
         (t (error "%d is out of range" number))))
