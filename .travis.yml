@@ -10,9 +10,10 @@ env:
 before_install:
   - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
   - evm install $EVM_EMACS --use --skip
-  - cask
+  - cask --verbose --debug
 
 script:
-  - emacs --version
-  - emacs --batch --funcall batch-byte-compile number-to-word.el
-  - emacs --batch -L . --load ert --load number-to-word-tests --funcall ert-run-tests-batch-and-exit
+  # Compile
+  - cask exec emacs -Q --batch -f batch-byte-compile number-to-word.el
+  # Run tests
+  - cask exec emacs -Q --batch -L . -l ert -l number-to-word-tests -f ert-run-tests-batch-and-exit
