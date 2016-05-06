@@ -68,9 +68,10 @@ E.g.,
  12 => (0 1 2)
   1 => (0 0 1)."
   (let* ((s (number-to-string n))
-         (l (append s nil))
+         (l (seq-into s 'list))
          (padding (make-list (- 3 (length l)) ?0)))
-    (mapcar (lambda (char) (- char ?0)) (append padding l))))
+    (seq-map (lambda (char) (- char ?0))
+             (seq-concatenate 'list padding l))))
 
 (defun number-to-word--string-trim (string)
   "Remove one trailing blank space from STRING."
