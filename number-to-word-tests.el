@@ -14,6 +14,7 @@
   (should (string= "eleven" (number-to-word 11)))
   (should (string= "thirty-four" (number-to-word 34)))
   (should (string= "one hundred" (number-to-word 100)))
-  (should (string= "two hundred forty-six" (number-to-word 246))))
+  (should (string= "two hundred forty-six" (number-to-word 246)))
+  (should (string= "nine hundred ninety-nine" (number-to-word 999))))
 
 ;;; number-to-word-tests.el ends here
