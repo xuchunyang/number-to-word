@@ -17,6 +17,11 @@
   (should (string= "two hundred forty-six" (number-to-word 246)))
   (should (string= "nine hundred ninety-nine" (number-to-word 999))))
 
+(ert-deftest number-to-word-readable-test ()
+  (should (string= "1,024,000" (number-to-word-readable 1024000)))
+  (should (= 1024000 (number-to-word-unreadable "1,024,000")))
+  (should (= 1024 (number-to-word-unreadable (number-to-word-readable 1024)))))
+
 
 ;; Local Variables:
 ;; fill-column: 100

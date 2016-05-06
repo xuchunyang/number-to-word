@@ -61,7 +61,7 @@
   (cdr (assq n number-to-word--alist)))
 
 (defun number-to-word--listify (n)
-  "Convert N into list.  N must be in [0, 999].
+  "Convert N into list.
 E.g.,
 
 123 => (1 2 3)
@@ -69,7 +69,8 @@ E.g.,
   1 => (0 0 1)."
   (let* ((s (number-to-string n))
          (l (seq-into s 'list))
-         (padding (make-list (- 3 (length l)) ?0)))
+         (r (% (length l) 3))
+         (padding (and (/= 0 r) (make-list (- 3 r) ?0))))
     (seq-map (lambda (char) (- char ?0))
              (seq-concatenate 'list padding l))))
 
@@ -90,6 +91,23 @@ E.g.,
         (if s s
           (concat (and (> tens 0) (format "%s" (number-to-word--get (* tens 10))))
                   (and (> ones 0) (format "-%s" (number-to-word--get ones))))))))))
+
+(defun number-to-word-readable (number)
+  "Return a readable number in string for NUMBER."
+  (let ((units (seq-partition (number-to-word--listify number) 3)))
+    (mapconcat
+     #'identity
+     (seq-map-indexed (lambda (elt idx)
+                        (let ((s (mapconcat #'number-to-string elt "")))
+                          (if (= idx 0)
+                              (number-to-string
+                               (string-to-number s))
+                            s))) units)
+     ",")))
+
+(defun number-to-word-unreadable (string)
+  "Return a number for a readable number of STRING."
+  (string-to-number (replace-regexp-in-string "," "" string)))
 
 ;;;###autoload
 (defun number-to-word (number)
