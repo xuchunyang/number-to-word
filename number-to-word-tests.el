@@ -17,4 +17,9 @@
   (should (string= "two hundred forty-six" (number-to-word 246)))
   (should (string= "nine hundred ninety-nine" (number-to-word 999))))
 
+
+;; Local Variables:
+;; fill-column: 100
+;; End:
+
 ;;; number-to-word-tests.el ends here

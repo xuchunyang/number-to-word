@@ -97,4 +97,9 @@ E.g.,
     (error "%d is not supported" number)))
 
 (provide 'number-to-word)
+
+;; Local Variables:
+;; fill-column: 90
+;; End:
+
 ;;; number-to-word.el ends here
