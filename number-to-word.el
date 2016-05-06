@@ -75,13 +75,12 @@ E.g.,
              (seq-concatenate 'list padding l))))
 
 (defun number-to-word--string-trim (string)
-  "Remove one trailing blank space from STRING."
-  (if (and (not (string= string ""))
-           (= (aref string (1- (length string))) ? ))
-      (substring string 0 -1)
+  "Remove trailing blank spaces from STRING."
+  (if (string-match " +\\'" string)
+      (replace-match "" t t string)
     string))
 
-(defun number-to-word--stringify (n)
+(defun number-to-word--stringify-1 (n)
   "Convert N into string.  N must be in [0, 999]."
   (seq-let (hundreds tens ones) (number-to-word--listify n)
     (number-to-word--string-trim
@@ -91,6 +90,22 @@ E.g.,
         (if s s
           (concat (and (> tens 0) (format "%s" (number-to-word--get (* tens 10))))
                   (and (> ones 0) (format "-%s" (number-to-word--get ones))))))))))
+
+(defvar number-to-word--units '("" "thousand" "million" "billion" "trillion"))
+
+(defun number-to-word--stringify (n)
+  "Convert N into string."
+  (let ((l (seq-map-indexed
+            (lambda (elt idx)
+              (let ((number (string-to-number (mapconcat #'number-to-string elt ""))))
+                (when (/= number 0)
+                  (concat
+                   (number-to-word--stringify-1 number)
+                   " "
+                   (seq-elt number-to-word--units idx)))))
+            (seq-reverse (seq-partition (number-to-word--listify n) 3)))))
+    (number-to-word--string-trim
+     (seq-mapcat (lambda (s) (and s (concat s " "))) (seq-reverse l) 'string))))
 
 (defun number-to-word-readable (number)
   "Return a readable number in string for NUMBER."
@@ -111,10 +126,11 @@ E.g.,
 
 ;;;###autoload
 (defun number-to-word (number)
+  (cl-check-type number (integer 0 *) "a non-negative integer")
   (cond ((= number 0) "zero")
-        ((and (< 0 number) (<= number 999))
+        ((and (< 0 number) (<= number (1- 1e15)))
          (number-to-word--stringify number))
-        (t (error "%d is not supported" number))))
+        (t (error "%d is out of range" number))))
 
 (provide 'number-to-word)
 
