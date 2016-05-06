@@ -93,9 +93,10 @@ E.g.,
 
 ;;;###autoload
 (defun number-to-word (number)
-  (if (and (<= 0 number) (<= number 999))
-      (number-to-word--stringify number)
-    (error "%d is not supported" number)))
+  (cond ((= number 0) "zero")
+        ((and (< 0 number) (<= number 999))
+         (number-to-word--stringify number))
+        (t (error "%d is not supported" number))))
 
 (provide 'number-to-word)
 
